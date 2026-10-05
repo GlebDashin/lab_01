@@ -3,6 +3,7 @@ from .errors import IncompatibleUnitsError, InvalidValueError, UnknownUnitError
 
 
 def convert(value: float, from_: str, to_: str) -> float:
+    """Конвертировать одну единицу измерения в другую"""
     from_ = from_.lower()
     to_ = to_.lower()
     if from_ not in CONVERSION:

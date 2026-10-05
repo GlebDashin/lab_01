@@ -158,4 +158,5 @@ def calculate_operation(left: str, operation: str, right: str) -> float:
 
 
 def isnumber(token: str) -> bool:
+    """Проверка на число"""
     return token[-1] in "0123456789"
