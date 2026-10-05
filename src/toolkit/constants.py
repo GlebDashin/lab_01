@@ -1,6 +1,6 @@
 SAMPLE_CONSTANT: int = 10
 CONVERSION: dict[str, tuple[str, float]] = {
-    "mm": ("lenght", 0.001),
+    "mm": ("length", 0.001),
     "m": ("length", 1.0),
     "km": ("length", 1000.0),
     "cm": ("length", 0.01),
