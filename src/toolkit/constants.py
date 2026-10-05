@@ -1,4 +1,3 @@
-SAMPLE_CONSTANT: int = 10
 CONVERSION: dict[str, tuple[str, float]] = {
     "mm": ("length", 0.001),
     "m": ("length", 1.0),
