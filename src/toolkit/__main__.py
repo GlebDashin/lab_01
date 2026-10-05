@@ -3,25 +3,23 @@ import sys
 
 from .calculator import calc
 from .converter import convert
-from .errors import(
-    CalculatorError,
-    ConverterError
-)
+from .errors import CalculatorError, ConverterError
 
 
-def create_parser () -> argparse.ArgumentParser:
+def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
 
     commands = parser.add_subparsers(dest="command", required=True)
 
     calc_parser = commands.add_parser("calc", prefix_chars="/")
-    calc_parser.add_argument("expression", type = str)
+    calc_parser.add_argument("expression", type=str)
 
     convert_parser = commands.add_parser("convert")
     convert_parser.add_argument("value", type=float)
     convert_parser.add_argument("--from", dest="from_unit", required=True)
     convert_parser.add_argument("--to", dest="to_unit", required=True)
     return parser
+
 
 def main() -> None:
     """
@@ -31,20 +29,18 @@ def main() -> None:
     parser = create_parser()
     args = parser.parse_args()
 
-
     if args.command == "calc":
         try:
             print(calc(args.expression))
         except CalculatorError as error:
-            print (error, file = sys.stderr)
+            print(error, file=sys.stderr)
             sys.exit(2)
-
 
     if args.command == "convert":
         try:
             print(convert(args.value, args.from_unit, args.to_unit))
         except ConverterError as error:
-            print(error, file = sys.stderr)
+            print(error, file=sys.stderr)
             sys.exit(2)
 
 

@@ -1,21 +1,25 @@
-from .errors import(
+from .errors import (
+    DivisionByZeroError,
     EmptyExpressionError,
+    FirstOrEndOperandError,
     InvalidCharacterError,
     MissingOperandError,
     TwoInwalidOperatorsError,
-    DivisionByZeroError,
-    FirstOrEndOperandError
 )
 
+
 def calc(expression: str) -> float:
+    """Главная функция вычисления выражения"""
 
     token_expression = tokenize(expression)
     validate(token_expression)
-    result=calculation(token_expression)
+    result = calculation(token_expression)
 
     return result
 
+
 def tokenize(expression: str) -> list[str]:
+    """Разбиение на выражения на токены"""
     token_expression: list[str] = []
     token = ""
 
@@ -40,7 +44,9 @@ def tokenize(expression: str) -> list[str]:
 
     return token_expression
 
+
 def validate(token_expression: list[str]) -> None:
+    """Проверка токенов на допустимость"""
     if not token_expression:
         raise EmptyExpressionError("Пустое выражение")
     if token_expression[0] in "*/":
@@ -50,18 +56,29 @@ def validate(token_expression: list[str]) -> None:
     if token_expression[0] in "+-" and token_expression[1] in "+-":
         raise TwoInwalidOperatorsError("Две операции в начале строки")
     for i in range(len(token_expression)):
-        if token_expression[i].count(".")>1:
+        if token_expression[i].count(".") > 1:
             raise InvalidCharacterError("Несколько точек в числе")
         if token_expression[i] == ".":
             raise InvalidCharacterError("Число из одной точки")
-        if i>0 and isnumber(token_expression[i-1]) and isnumber(token_expression[i]):
+        if (
+            i > 0
+            and isnumber(token_expression[i - 1])
+            and isnumber(token_expression[i])
+        ):
             raise MissingOperandError("Между чисел нет операции")
-        if i>0 and token_expression[i-1] in "/*+-" and token_expression[i] in "/*":
+        if i > 0 and token_expression[i - 1] in "/*+-" and token_expression[i] in "/*":
             raise TwoInwalidOperatorsError("Неправильная комбинация 2 операций")
-        if i>1 and token_expression[i-2] in "/*+-" and token_expression[i-1] in "/*+-" and token_expression[i] in "*/+-":
+        if (
+            i > 1
+            and token_expression[i - 2] in "/*+-"
+            and token_expression[i - 1] in "/*+-"
+            and token_expression[i] in "*/+-"
+        ):
             raise TwoInwalidOperatorsError("3 операции подряд")
 
-def calculation(token_expression: list[str]):
+
+def calculation(token_expression: list[str]) -> float:
+    """Вычисление выражения из списка токенов"""
 
     if token_expression[0] == "-":
         del token_expression[0]
@@ -72,52 +89,73 @@ def calculation(token_expression: list[str]):
 
     i = 2
     while i < len(token_expression):
-        if token_expression[i-2] in "+-*/" and token_expression[i-1] == "-" and  isnumber(token_expression[i]):
-            token_expression[i]=f"-{token_expression[i]}"
-            del token_expression[i-1]
-        elif token_expression[i-2] in "+-*/" and token_expression[i-1] == "+" and  isnumber(token_expression[i]):
-            token_expression[i]=f"+{token_expression[i]}"
-            del token_expression[i-1]
+        if (
+            token_expression[i - 2] in "+-*/"
+            and token_expression[i - 1] == "-"
+            and isnumber(token_expression[i])
+        ):
+            token_expression[i] = f"-{token_expression[i]}"
+            del token_expression[i - 1]
+        elif (
+            token_expression[i - 2] in "+-*/"
+            and token_expression[i - 1] == "+"
+            and isnumber(token_expression[i])
+        ):
+            token_expression[i] = f"+{token_expression[i]}"
+            del token_expression[i - 1]
         else:
             i += 1
 
     i = 2
     while i < len(token_expression):
-        if token_expression[i-1] in "*/":
-            token_expression[i-1] = str(calculate_operation(token_expression[i-2], token_expression[i-1], token_expression[i]))
+        if token_expression[i - 1] in "*/":
+            token_expression[i - 1] = str(
+                calculate_operation(
+                    token_expression[i - 2],
+                    token_expression[i - 1],
+                    token_expression[i],
+                )
+            )
             del token_expression[i]
-            del token_expression[i-2]
+            del token_expression[i - 2]
         else:
             i += 1
     i = 2
     while i < len(token_expression):
-        if token_expression[i-1] in "+-":
-            token_expression[i-1] = str(calculate_operation(token_expression[i-2], token_expression[i-1], token_expression[i]))
+        if token_expression[i - 1] in "+-":
+            token_expression[i - 1] = str(
+                calculate_operation(
+                    token_expression[i - 2],
+                    token_expression[i - 1],
+                    token_expression[i],
+                )
+            )
             del token_expression[i]
-            del token_expression[i-2]
+            del token_expression[i - 2]
         else:
             i += 1
     return float(token_expression[0])
 
+
 def calculate_operation(left: str, operation: str, right: str) -> float:
+    """Обработка единичной операции выражения"""
     left_number = float(left)
     right_number = float(right)
 
     match operation:
         case "+":
-            return (left_number+right_number)
+            return left_number + right_number
         case "-":
-            return (left_number-right_number)
+            return left_number - right_number
         case "*":
-            return (left_number*right_number)
+            return left_number * right_number
         case "/":
             if operation == "/" and right_number == 0:
                 raise DivisionByZeroError("Деление на 0")
-            return (left_number/right_number)
+            return left_number / right_number
         case _:
             raise InvalidCharacterError(f"Неизвестная операция {operation}")
 
+
 def isnumber(token: str) -> bool:
-    if token[-1] in "0123456789":
-        return True
-    return False
+    return token[-1] in "0123456789"

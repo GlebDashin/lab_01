@@ -1,17 +1,14 @@
-from .errors import(
-    UnknownUnitError,
-    IncompatibleUnitsError,
-    InvalidValueError
-)
-from .constants import(
-    CONVERSION
-)
+from .constants import CONVERSION
+from .errors import IncompatibleUnitsError, InvalidValueError, UnknownUnitError
 
-def convert(value: float, from_: str, to_: str ) -> float:
+
+def convert(value: float, from_: str, to_: str) -> float:
+    from_ = from_.lower()
+    to_ = to_.lower()
     if from_ not in CONVERSION:
         raise UnknownUnitError(f"Неизвестная единица измерения {from_}")
     if to_ not in CONVERSION:
-        raise UnknownUnitError(F"неизвестная единица измерения {to_}")
+        raise UnknownUnitError(f"неизвестная единица измерения {to_}")
 
     from_kind, from_ratio = CONVERSION[from_]
     to_kind, to_ratio = CONVERSION[to_]
