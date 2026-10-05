@@ -2,7 +2,12 @@ import argparse
 import sys
 
 from .calculator import calc
-from .errors import CalculatorError
+from .converter import convert
+from .errors import(
+    CalculatorError,
+    ConverterError
+)
+
 
 def create_parser () -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
@@ -31,12 +36,16 @@ def main() -> None:
         try:
             print(calc(args.expression))
         except CalculatorError as error:
-            print (error, file=sys.stderr)
+            print (error, file = sys.stderr)
             sys.exit(2)
 
 
     if args.command == "convert":
-        pass
+        try:
+            print(convert(args.value, args.from_unit, args.to_unit))
+        except ConverterError as error:
+            print(error, file = sys.stderr)
+            sys.exit(2)
 
 
 if __name__ == "__main__":

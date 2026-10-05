@@ -25,11 +25,11 @@ class DivisionByZeroError(CalculatorError):
 class ConverterError(ToolkitError):
     pass
 
-class UnkownUnitError(ConverterError):
+class UnknownUnitError(ConverterError):
     pass
 
 class IncompatibleUnitsError(ConverterError):
     pass
 
-class InvalidValue(ConverterError):
+class InvalidValueError(ConverterError):
     pass
